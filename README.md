@@ -7,6 +7,7 @@ Instructions.
 1) Git clone and mvn install the 3scale Java Plugin: https://github.com/3scale/3scale_ws_api_for_java
 
 2) Git clone this repo. Make the following modifications
+    
     - Edit pom.xml - ensuring the version of the dependency with groupId net.3scale and artifactId 3scale-api has the same version as the Java Plugin in the previous step.
 
     - Edit and update src/main/java/net/threescale/service/PluginService. Set the PROVIDER_KEY to that of your 3scale account. You'll find it in your 3scale account under the gear sign (top right of screen) -> Account. It's the API Key there.
