@@ -19,7 +19,7 @@ Instructions.
 
 4) Add a dependency to this repo in your Java Application's POM file.
 
-5) In your API code, import Plugin Service' and call the its authRep method - exit if unauthorized. Something like this :
+5) In your API code, add the wrapper call. userKey will likley have been passed in as a query or header parameter. Exit if unauthorized. Something like this :
             
         import threescale.v3.api.AuthorizeResponse;
         
@@ -37,3 +37,7 @@ Instructions.
                 return new Greeting(0, "ERROR - UNAUTHROIZED", ""); //Or equivalent!
         
             }
+
+Summary
+This solution is a wrapper around the 3scale Java Plugin that offers near zero millisecond API Management. It's useful for say microservice to microservice calls where gateway usage adds too much complexity and latency. The code fragment (section 5) could be added as a Servlet filter, an inceptor or cross cutting concern or indeed its own injected class. 
+

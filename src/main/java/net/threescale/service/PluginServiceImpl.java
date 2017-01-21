@@ -14,27 +14,38 @@ import threescale.v3.api.ServerError;
 import threescale.v3.api.ServiceApi;
 import threescale.v3.api.impl.ServiceApiDriver;
 
+/**
+ * 
+ * @author tomcorcoran
+ * Implementation of the 3scale Java Plugin Wrapper
+ *
+ */
 @Service
 public class PluginServiceImpl implements PluginService{
 	private Map <String, ThreeScaleMapping> mappings = null;
 	
-	
+	/** Previous Authorization results **/
 	private Map <String, Boolean> authorizations = new HashMap<String, Boolean>();
 	
 	
-
+	/**
+	 * Constructor where mappings is initialized with the mappings you defined on the API->Integration screen 
+	 * on 3scale. In future enhancements, we will pull in these using the 3scale API. 
+	 */
 	public PluginServiceImpl() {
 		super();
 		mappings = new HashMap<String, ThreeScaleMapping>();
 		mappings.put("/<url-endpoint-1>", new ThreeScaleMapping("<HTTP-Method-1>", "<Service-id-1>", "<method-or-metric-1-system-name>"));
+		
 	}
 
 	
-
+	/**
+	 * Main Implementing method. If the cache (authorizations) has stored 'true' against userKey:MetricOrMethod, make an
+	 * asynchronous call to 3scale, otherwise make a synchronous call. 
+	 */
 	@Override
 	public AuthorizeResponse authRep(String userKey, String requestPath) {
-		
-    	//long start = System.currentTimeMillis();
 		
     	ThreeScaleMapping mapping = mappings.get(requestPath);
 		AuthorizeResponse resp = null;
@@ -46,24 +57,18 @@ public class PluginServiceImpl implements PluginService{
 			asyncAuth.start();
 		}
 		else{
-	    	//long end = System.currentTimeMillis();
-	    	//long diff = end - start;
-	    	
-			//System.out.println("SYNC LATENCY....."+diff);
-			//System.out.println("SYNC LATENCY.....");
+
 			return getSyncAuthResponse(userKey, requestPath, mapping);
 			
 		}
-    	//long end = System.currentTimeMillis();
-    	//long diff = end - start;
-    	
-		//System.out.println("ASYNC LATENCY....."+diff);
-		//System.out.println("ASYNC LATENCY.....");
-    	
     	return resp;
 	}
 	
-	
+	/**
+	 * @author tomcorcoran
+	 * Used for asynchronous calls.
+	 *
+	 */
 	class ASyncAuth extends Thread {
 		String userKey, requestPath;
 		ThreeScaleMapping mapping;
@@ -73,16 +78,15 @@ public class PluginServiceImpl implements PluginService{
 			mapping = mping;
 		}
 	    public void run(){
-	    	//long start = System.currentTimeMillis();
 	    	AuthorizeResponse resp = getAuthResponse(userKey, requestPath, mapping);
-	    	//long took = System.currentTimeMillis()-start;
-	    	//System.out.println("ASYNC authorized: " + resp.success() + ", took "+took + " ms");
 	    }
 	    
 	  }
 	
 	
-    
+    /**
+     * Used for synchronous calls
+     */
 	private AuthorizeResponse getSyncAuthResponse(String userKey, String requestPath, ThreeScaleMapping mapping){
 		return getAuthResponse(userKey, requestPath, mapping);
 	}
