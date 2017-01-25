@@ -47,7 +47,9 @@ public class PluginServiceImpl implements PluginService{
 	@Override
 	public AuthorizeResponse authRep(String userKey, String requestPath) {
 		
-    	ThreeScaleMapping mapping = mappings.get(requestPath);
+		//Note - an important enhancement will be to generalize requestPath, 
+		//replacing path variables with any placeholders contained in the mapping key. 
+		ThreeScaleMapping mapping = mappings.get(requestPath);
 		AuthorizeResponse resp = null;
 		
 		String key = userKey+mapping.getMetricOrMethod();
