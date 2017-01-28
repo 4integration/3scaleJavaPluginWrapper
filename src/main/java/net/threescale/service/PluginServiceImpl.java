@@ -2,10 +2,9 @@ package net.threescale.service;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Future;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 
 import threescale.v3.api.AuthorizeResponse;
@@ -31,12 +30,23 @@ public class PluginServiceImpl implements PluginService{
 	/**
 	 * Constructor where mappings is initialized with the mappings you defined on the API->Integration screen 
 	 * on 3scale. In future enhancements, we will pull in these using the 3scale API. 
+	 * We provide 2 example mappings - a literal and a Regex pattern of a path. Note we don't advocate adding 
+	 * a lot of Regex paths as it can add latency. If you have a lot of paths, we recommend splitting this 
+	 * service up into multiple components with a small number of paths in each. That way it doesn't have to 
+	 * loop and match multiple paths at runtime.
 	 */
 	public PluginServiceImpl() {
 		super();
 		mappings = new HashMap<String, ThreeScaleMapping>();
-		mappings.put("/<url-endpoint-1>", new ThreeScaleMapping("<HTTP-Method-1>", "<Service-id-1>", "<method-or-metric-1-system-name>"));
 		
+		String regexUrlPattern = "/managed/catalog/product";
+		Pattern pattern = Pattern.compile(regexUrlPattern);
+		mappings.put(regexUrlPattern, new ThreeScaleMapping("GET", "123456", "getProducts", pattern));
+		
+		regexUrlPattern = "/managed/catalog/product/(\\w+)";
+		pattern = Pattern.compile(regexUrlPattern);
+		mappings.put(regexUrlPattern, new ThreeScaleMapping("GET", "987654", "getProduct", pattern));
+
 	}
 
 	
@@ -47,20 +57,34 @@ public class PluginServiceImpl implements PluginService{
 	@Override
 	public AuthorizeResponse authRep(String userKey, String requestPath) {
 		
-		//Note - an important enhancement will be to generalize requestPath, 
-		//replacing path variables with any placeholders contained in the mapping key. 
-		ThreeScaleMapping mapping = mappings.get(requestPath);
+		//First see is there an exact match from the path to the pattern
+    	ThreeScaleMapping mappingFound = mappings.get(requestPath);
+    	
+		//Next, in the case of paths with embedded path variables, see is there a Regex match to one of our configured patterns
+    	if (mappingFound == null){
+    		for (ThreeScaleMapping mapping: mappings.values()){
+    			Matcher matcher = mapping.getPattern().matcher(requestPath);
+    		    if (matcher.matches()) {
+    		    	mappingFound = mapping;
+    		    	break;
+    			}
+    		}
+    	}
+    	if (mappingFound == null){
+    		return null;
+    	}
+    	
 		AuthorizeResponse resp = null;
 		
-		String key = userKey+mapping.getMetricOrMethod();
+		String key = userKey+mappingFound.getMetricOrMethod();
 		Boolean auth = authorizations.get(key);
 		if (auth!=null && (auth==true)){
-			Thread asyncAuth = new ASyncAuth(userKey, requestPath, mapping);
+			Thread asyncAuth = new ASyncAuth(userKey, requestPath, mappingFound);
 			asyncAuth.start();
 		}
 		else{
 
-			return getSyncAuthResponse(userKey, requestPath, mapping);
+			return getSyncAuthResponse(userKey, requestPath, mappingFound);
 			
 		}
     	return resp;

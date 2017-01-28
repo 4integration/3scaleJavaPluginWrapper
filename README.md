@@ -1,6 +1,9 @@
 # 3scaleJavaPluginWrapper
-Caching Wrapper for the 3scale Java Plugin. It caches previous AuthRep result to determine if communication with 3scale SaaS platform should be synchronous or asynchronous. If the previous call was successful, communication is asynchronous; otherwise synchronous. If client stays within their rate limits, it enables effectively latency free API Management.
+This is a caching wrapper for the 3scale Java Plugin. It caches previous AuthRep result to determine if communication with 3scale SaaS platform should be synchronous or asynchronous. If the previous call was successful, communication is asynchronous; otherwise synchronous. If client stays within their rate limits, it enables almost latency free API Management.
 It assumes you use API Key as the Authentication mode. It can be easily modified to use other modes.
+
+In 3scale we offer a lot of flexibility as to how you implement your solutions. This is one example of how to use the product, specifically the Java Plug In.
+
 
 Instructions.
 
@@ -8,18 +11,25 @@ Instructions.
 
 2) Git clone this repo. Make the following modifications
     
-    - Edit pom.xml - ensuring the version of the dependency with groupId net.3scale and artifactId 3scale-api has the same version as the Java Plugin in the previous step.
+- Edit pom.xml - ensuring the version of the dependency with groupId net.3scale and artifactId 3scale-api has the same version as the Java Plugin in the previous step.
 
-    - Edit and update src/main/java/net/threescale/service/PluginService. Set the PROVIDER_KEY to that of your 3scale account. You'll find it in your 3scale account under the gear sign (top right of screen) -> Account. It's the API Key there.
+- Edit and update src/main/java/net/threescale/service/PluginService. Set the PROVIDER_KEY to that of your 3scale account. You'll find it in your 3scale account under the gear sign (top right of screen) -> Account. It's the API Key there.
 
-    - Edit and update src/main/java/net/threescale/service/PluginServiceImpl. Go to your Integration screen in 3scale: Dashboard -> API Menu -> Integration. Expand the mapping rules section. In the constructor, PluginServiceImpl(), you'll want to reflect these mappings. For each mapping add the URL pattern, the HTTP verb, Service id - found in the browser address bar url after 'services/' and the method or metric system name. You'll find the latter by clicking Define.
-      (We will enhance this to pull in these mappings via the 3scale APIs)
+- Edit and update src/main/java/net/threescale/service/PluginServiceImpl. Go to your Integration screen in 3scale: Dashboard 
+-> API Menu -> Integration. Expand the mapping rules section. In the constructor, PluginServiceImpl(), you'll want to 
+reflect these mappings. For each mapping:
+1) create a Pattern object with the URL pattern - this can be a static path - or a Regex pattern. Note the format of these 	
+variable fragments of the path differ from how they are declared on 3scale. So instead of using '/{id}', here with Regex 
+you'll use '/(\\w+)' for alphanumeric values or '/(\\d+)' for numerics
+2) Create a ThreeScaleMapping object as shown in the PluginServiceImpl class and place it in the mappings collection. 
+(You'll find the Service Id when on the 3scale site in the browser address bar url after 'services/'. You'll find the  
+method or metric system name - by clicking Define on the Integration page. We will enhance this to pull in these mappings via the 3scale APIs)
 
 3) Save these changes and mvn install.
 
 4) Add a dependency to this repo in your Java Application's POM file.
 
-5) In your API code, add the wrapper call. userKey will likley have been passed in as a query or header parameter. Exit if unauthorized. Something like this :
+5) In your API code, add the wrapper call. userKey will likely have been passed in as a query or header parameter. Exit if unauthorized. Something like this :
             
         import threescale.v3.api.AuthorizeResponse;
         
@@ -30,13 +40,18 @@ Instructions.
         AuthorizeResponse authorizeResponse = pluginService.authRep(userKey, request.getServletPath());
         
 
-            if (authorizeResponse!= null && !authorizeResponse.success()){
-        
-                response.setStatus(403);
-        
-                return new Greeting(0, "ERROR - UNAUTHROIZED", ""); //Or equivalent!
-        
-            }
+	    	if (authorizeResponse == null){
+	    		response.setStatus(403);
+	    		return new Greeting(0, "ERROR - Forbidden Request", "");
+	    	}
+
+6) These are example latencies I achieved usring my test. 
+In the first, I hit an API endpoint 1000 times. I use 10 threads in JMeter - each one hitting the API 100 times. There is no Java Plugin Wrapper in use on this endpoint. Average latencies are shown.
+![direct](https://cloud.githubusercontent.com/assets/5570713/22400230/293de02c-e57d-11e6-93c4-a7cdf836fd9a.png)
+
+In the second, I apply the same test to an identical endpoint - except for the inclusion of this Java Plugin Wrapper. Average latencies are shown - 1 ms slower on average than .
+![managed](https://cloud.githubusercontent.com/assets/5570713/22400240/32d1c842-e57d-11e6-9f2d-c054478381e0.png)
+
 
 Summary
 
