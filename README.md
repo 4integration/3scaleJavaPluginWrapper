@@ -45,6 +45,8 @@ method or metric system name - by clicking Define on the Integration page. We wi
 	    		return new Greeting(0, "ERROR - Forbidden Request", "");
 	    	}
 
+	    .... continue with your API call
+
 6) These are example latencies I achieved usring my test. 
 In the first, I hit an API endpoint 1000 times. I use 10 threads in JMeter - each one hitting the API 100 times. There is no Java Plugin Wrapper in use on this endpoint. Average latencies are shown.
 ![direct](https://cloud.githubusercontent.com/assets/5570713/22400230/293de02c-e57d-11e6-93c4-a7cdf836fd9a.png)
