@@ -25,6 +25,8 @@ you'll use '/(\\w+)' for alphanumeric values or '/(\\d+)' for numerics
 (You'll find the Service Id when on the 3scale site in the browser address bar url after 'services/'. You'll find the  
 method or metric system name - by clicking Define on the Integration page. We will enhance this to pull in these mappings via the 3scale APIs)
 
+Note. Performance may be affected if there are a large number of mappings, particularly Regex patterns. If you see a performance degrade, there are options for improvement. One would be to split the component into more than one - with a smaller number of patterns to loop through at runtime. The ultimate would be to have no lookup at all - rather pass in the 3scale method/metric and service id from the API code. We don't advocate these unless necessary however as they compromise design somewhat - increasing the coupling between the calling code and the service. 
+
 3) Save these changes and mvn install.
 
 4) Add a dependency to this repo in your Java Application's POM file.
