@@ -31,9 +31,13 @@ public class PluginServiceImpl implements PluginService{
 	 * Constructor where mappings is initialized with the mappings you defined on the API->Integration screen 
 	 * on 3scale. In future enhancements, we will pull in these using the 3scale API. 
 	 * We provide 2 example mappings - a literal and a Regex pattern of a path. Note we don't advocate adding 
-	 * a lot of Regex paths as it can add latency. If you have a lot of paths, we recommend splitting this 
-	 * service up into multiple components with a small number of paths in each. That way it doesn't have to 
-	 * loop and match multiple paths at runtime.
+	 * a lot of Regex paths as it can add latency. 
+	 * Note. Performance may be affected if there are a large number of mappings, particularly Regex patterns. 
+	 * If you see a performance degrade, there are options for improvement. One would be to split the component 
+	 * into more than one - with a smaller number of patterns to loop through at runtime. The ultimate would be 
+	 * to have no lookup at all - rather pass in the 3scale method/metric and service id from the API code at 
+	 * runtime. We don't advocate these unless necessary however as they compromise design somewhat - increasing 
+	 * the coupling between the calling code and the service. 
 	 */
 	public PluginServiceImpl() {
 		super();
