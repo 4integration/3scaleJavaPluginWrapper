@@ -31,7 +31,6 @@ method or metric system name - by clicking Define on the Integration page. We wi
 
 5) In your API code, add the wrapper call. userKey will likely have been passed in as a query or header parameter. Exit if unauthorized. Something like this :
             
-        import threescale.v3.api.AuthorizeResponse;
         
         import net.threescale.service.PluginService;
         
