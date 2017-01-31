@@ -37,13 +37,12 @@ method or metric system name - by clicking Define on the Integration page. We wi
         
         ....
         
-        AuthorizeResponse authorizeResponse = pluginService.authRep(userKey, request.getServletPath());
-        
+    	boolean authorized = pluginService.authRep(userKey, request.getServletPath());
+    	if (!authorized){
+    		response.setStatus(403);
+    		return new Result(0, "ERROR - UNAUTHROIZED", "");
+    	}
 
-	    	if (authorizeResponse == null){
-	    		response.setStatus(403);
-	    		return new Greeting(0, "ERROR - Forbidden Request", "");
-	    	}
 
 	    .... continue with your API code
 

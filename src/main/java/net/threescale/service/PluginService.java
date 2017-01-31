@@ -1,6 +1,5 @@
 package net.threescale.service;
 
-import threescale.v3.api.AuthorizeResponse;
 /**
  * 
  * @author tomcorcoran
@@ -16,8 +15,7 @@ public interface PluginService {
 	 * 	It identifies the client and is used by 3scale to authorize and rate limit. Other modes such 
 	 *	 as AppId/AppKey pair and could be used in enhanced versions.   
 	 * @param requestPath - the URL path of the request
-	 * @return AuthorizeResponse - a 3scale Plugin defined object that contains a flag indicating 
-	 * 	whether 3scale authorized the request.
+	 * @return Boolean - a flag indicating whether 3scale authorized the request or there was no mapping.
 	 */
-	public AuthorizeResponse authRep(String userKey, String requestPath);
+	public Boolean authRep(String userKey, String requestPath);
 }

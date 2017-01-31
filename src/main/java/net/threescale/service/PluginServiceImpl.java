@@ -59,7 +59,7 @@ public class PluginServiceImpl implements PluginService{
 	 * asynchronous call to 3scale, otherwise make a synchronous call. 
 	 */
 	@Override
-	public AuthorizeResponse authRep(String userKey, String requestPath) {
+	public Boolean authRep(String userKey, String requestPath) {
 		
 		//First see is there an exact match from the path to the pattern
     	ThreeScaleMapping mappingFound = mappings.get(requestPath);
@@ -75,10 +75,10 @@ public class PluginServiceImpl implements PluginService{
     		}
     	}
     	if (mappingFound == null){
-    		return null;
+    		return false;
     	}
     	
-		AuthorizeResponse resp = null;
+		Boolean resp = true;
 		
 		String key = userKey+mappingFound.getMetricOrMethod();
 		Boolean auth = authorizations.get(key);
@@ -108,7 +108,7 @@ public class PluginServiceImpl implements PluginService{
 			mapping = mping;
 		}
 	    public void run(){
-	    	AuthorizeResponse resp = getAuthResponse(userKey, requestPath, mapping);
+	    	getAuthResponse(userKey, requestPath, mapping);
 	    }
 	    
 	  }
@@ -117,11 +117,11 @@ public class PluginServiceImpl implements PluginService{
     /**
      * Used for synchronous calls
      */
-	private AuthorizeResponse getSyncAuthResponse(String userKey, String requestPath, ThreeScaleMapping mapping){
+	private Boolean getSyncAuthResponse(String userKey, String requestPath, ThreeScaleMapping mapping){
 		return getAuthResponse(userKey, requestPath, mapping);
 	}
 	
-	private AuthorizeResponse getAuthResponse(String userKey, String requestPath, ThreeScaleMapping mapping){
+	private Boolean getAuthResponse(String userKey, String requestPath, ThreeScaleMapping mapping){
  
 
     	AuthorizeResponse authorizeResponse = null;
@@ -137,7 +137,7 @@ public class PluginServiceImpl implements PluginService{
     	
     	authorizations.put(userKey+mapping.getMetricOrMethod(), authorizeResponse.success());
     	
-       	return authorizeResponse;
+       	return authorizeResponse!= null && authorizeResponse.success();
 		
 	}
 	
