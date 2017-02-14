@@ -47,11 +47,10 @@ method or metric system name - by clicking Define on the Integration page. We wi
 
 6) These are example latencies I achieved using my test. 
 In the first, I hit an API endpoint 1000 times. I use 10 threads in JMeter - each one hitting the API 100 times. There is no Java Plugin Wrapper in use on this endpoint. Average latencies are shown.
-![direct](https://cloud.githubusercontent.com/assets/5570713/22400230/293de02c-e57d-11e6-93c4-a7cdf836fd9a.png)
+![direct](https://cloud.githubusercontent.com/assets/5570713/22908137/c5bf5634-f21a-11e6-99e9-3ff9c1232d4f.png)
 
-In the second, I apply the same test to an identical endpoint - except for the inclusion of this Java Plugin Wrapper. Average latencies are shown - 1 ms slower on average than .
-![managed](https://cloud.githubusercontent.com/assets/5570713/22400240/32d1c842-e57d-11e6-9f2d-c054478381e0.png)
-
+In the second, I apply the same test to an identical endpoint - except for the inclusion of this Java Plugin Wrapper. Average latencies are shown - 1 ms slower on average than the first endpoint.
+![managed](https://cloud.githubusercontent.com/assets/5570713/22908148/cc7751e8-f21a-11e6-8602-2e06680f016f.png)
 
 Summary
 
