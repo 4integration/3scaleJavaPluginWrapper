@@ -52,6 +52,19 @@ In the first, I hit an API endpoint 1000 times. I use 10 threads in JMeter - eac
 In the second, I apply the same test to an identical endpoint - except for the inclusion of this Java Plugin Wrapper. Average latencies are shown - 1 ms slower on average than the first endpoint.
 ![managed](https://cloud.githubusercontent.com/assets/5570713/22908148/cc7751e8-f21a-11e6-8602-2e06680f016f.png)
 
+UPDATE Feb 23 2017:
+After some consideration and feedback, it's become obvious some ways this code could be optiimized. I got between 1-2 ms latency overhead over and above hitting the non-managed endpoint. These are ways this can be brought down to <1ms and also how it can be made more production ready:
+
+- make it so a user can pass in the provider key when instantiating, or read from a properties file at start-up. This would allow people to just use the Maven artifact and not have to clone/fork and edit and build the repo.
+- I have other hard coded things: https://github.com/tnscorcoran/3scaleJavaPluginWrapper/blob/master/src/main/java/net/threescale/service/PluginServiceImpl.java#L46. This is clearly not optimal. The mappings section needs to be removed altogether. Consider the situation where a provider has a hundred, or even a thousand endpoints. Looping through them and applying regex matching to each, would quickly ratchet up the latencies. Rather, an intelligent naming convention for the 3scale Metric/Method names is the way. You don't want the internal Java code needing to know about a Java system name of a mapping it relates to. But if a convention like the following was used, it would be acceptable, e.g. the URL pattern: GET /catalogs{id}/products/{id}/listings{month} could correspond to the 3scale system name: get-catalogs-id-products-id-listings-month. The naming convention is enough for the Java coder to know what the 3scale system name is. Therefore no looping, no regex to get system name. Instead pass it in.
+- Possibly use a thread pool or executor for the async reports.
+https://docs.oracle.com/javase/7/docs/api/java/util/concurrent/ThreadPoolExecutor.html
+- Make concurrency/thread safe. Starting with use of a ConcurrentHashMap (https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/ConcurrentHashMap.html) or similar, plus sync on methods requiring it....this requires analysis and concurrent Java fu.
+- Add tests ! :-)   ALWAYS! 
+- indentation need improvement.
+
+We will get to these, but in case you need the code before we do, bear them in mind for your implementation.
+
 Summary
 
 This solution is a wrapper around the 3scale Java Plugin that offers near zero millisecond API Management. It's useful for say microservice to microservice calls where gateway usage adds too much complexity and latency. The code fragment (section 5) could be added as a Servlet filter, an inceptor or cross cutting concern or indeed its own injected class. 
