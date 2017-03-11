@@ -50,9 +50,9 @@ public class PluginServiceTest{
     
     @Test (expected = ServerError.class) 
     public void testServerErrorNoServiceToken() throws ServerError  {
-		mockProps.setProperty("method-serviceid", "serviceId");      
-		pluginServiceUnderTest.setProps(mockProps);
-		pluginServiceUnderTest.authRep("userKey", "method");
+        mockProps.setProperty("method-serviceid", "serviceId");      
+        pluginServiceUnderTest.setProps(mockProps);
+        pluginServiceUnderTest.authRep("userKey", "method");
     }
 
     
