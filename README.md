@@ -49,7 +49,7 @@ GET /catalogs{id}/products/{id}/listings{month}
 could correspond to the 3scale system name: get-catalogs-id-products-id-listings-month. 
 
 This would also allow you to make the calls to the wrapper inside a dedicated module like a Servlet Filter, Interceptor or other cross cutting concern. 
-The module would just need to dynamically construct the system name of the methoid off the URL path and then call the wrapper. This way API Management is separated from API implementation.
+The module would just need to dynamically construct the system name of the method off the URL path and then call the wrapper. This way API Management is separated from API implementation.
 
 6) These are example latencies I achieved using my test. 
 In the first, I hit an API endpoint 1000 times. I use 10 threads in JMeter - each one hitting the API 100 times. There is no Java Plugin Wrapper in use on this endpoint. Average latencies are shown.
