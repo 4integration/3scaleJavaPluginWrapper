@@ -19,9 +19,9 @@ Instructions.
 
 The next thing you need to do is retrieve your 3scale Method and Metric system names and map each to the service id and service token to which they belong. Inside each Service, click Integration. Go to the Mapping Rules section and click Define. You will see a list of methods and metrics. Copy the system names of each one that you want to use the Plugin Wrapper to manage. Make 2 entries for each one in props.properties:
 
-<method or metric system name>-serviceid=<that service's service id>
+methodOrMetricSystemName-serviceid=serviceid1
 
-<method or metric system name>-token=<that service's service token>
+methodOrMetricSystemName-token=serviceToken1
 
 3) Save these changes and run mvn install.
 
