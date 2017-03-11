@@ -10,6 +10,6 @@ public interface PluginService {
     public String NO_SERVICE_ID_PROP_WARNING = "NO_SERVICE_ID_PROP_WARNING";		
     public String NO_SERVICE_TOKEN_PROP_WARNING = "NO_SERVICE_TOKEN_PROP_WARNING";		
 
-    public AuthorizeResponse authRep(String userKey, String requestPath) throws ServerError;
+    public AuthorizeResponse authRep(String userKey, String methodOrMetricSystemName) throws ServerError;
     
 }
