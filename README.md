@@ -55,7 +55,9 @@ The module would just need to dynamically construct the system name of the metho
 In the first, I hit an API endpoint 1000 times. I use 10 threads in JMeter - each one hitting the API 100 times. There is no Java Plugin Wrapper in use on this endpoint. Average latencies are shown.
 ![direct](https://cloud.githubusercontent.com/assets/5570713/22908137/c5bf5634-f21a-11e6-99e9-3ff9c1232d4f.png)
 
-In the second, I apply the same test to an identical endpoYou don't want the internal Java code needing to know about a Java system name of a mapping it relates to. But if a convention like the following was used, it would be acceptable, e.g. the URL pattern: GET /catalogs{id}/products/{id}/listings{month} could correspond to the 3scale system name: get-catalogs-id-products-id-listings-month. The naming convention is enough for the Java coder to know what the 3scale system name is. Therefore no looping, no regex to get system name. Instead pass it in.int - except for the inclusion of this Java Plugin Wrapper. Average latencies are shown - 1 ms slower on average than the first endpoint.
+In the second, I apply the same test to an identical endpoint. You don't want the internal Java code needing to know about a Java system name of a mapping it relates to. But if a convention like the following was used, it would be acceptable, e.g. the URL pattern: GET /catalogs{id}/products/{id}/listings{month} could correspond to the 3scale system name: get-catalogs-id-products-id-listings-month. The naming convention is enough for the Java coder to know what the 3scale system name is. 
+
+Average latencies are shown - 1 ms slower on average than the first endpoint.
 ![managed](https://cloud.githubusercontent.com/assets/5570713/22908148/cc7751e8-f21a-11e6-8602-2e06680f016f.png)
 
 Summary
