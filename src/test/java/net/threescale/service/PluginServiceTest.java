@@ -75,7 +75,7 @@ public class PluginServiceTest{
     	mockProps.setProperty("method-token", "servicetoken"); 
     	mockProps.setProperty("method-serviceid", "serviceId");        
         
-         AuthorizeResponse failResponse = new AuthorizeResponse(403, FAILED_RESP);
+        AuthorizeResponse failResponse = new AuthorizeResponse(403, FAILED_RESP);
         when(mockServiceApi.authrep(any(), any(), any())).thenReturn(failResponse);
         
         AuthorizeResponse response = pluginServiceUnderTest.authRep("userKey", "method");
