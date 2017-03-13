@@ -17,7 +17,7 @@ Instructions.
 
 - Edit and update /src/main/resources/props.properties. Each 3scale Service, defined under the API Menu, has a Service ID and a Service Token. You need to copy these from the 3scale API Manager. To get the Service ID, go into the Definition of each API and you will see it in the browser address bar following the '/services' URL fregment. To get the Service Token(s), click: gear sign on the top right of the screen -> Personal Settings -> Tokens. For every service you have, there will be a Service Token.
 
-The next thing you need to do is retrieve your 3scale Method and Metric system names and map each to the service id and service token to which they belong. Inside each Service, click Integration. Go to the Mapping Rules section and click Define. You will see a list of methods and metrics. Copy the system names of each one that you want to use the Plugin Wrapper to manage. Make 2 entries for each one in props.properties:
+The next thing you need to do is retrieve your 3scale Method and Metric system names and map each to the service id and service token to which they belong. Inside each Service, click Integration. Go to the Mapping Rules section and click Define. You will see a list of methods and metrics. Copy the system names of each one that you want to use the Plugin Wrapper to manage. Make 2 entries for each one in props.properties, substitiuting your actual strings for methodOrMetricSystemName, serviceid1 and serviceToken1:
 
 methodOrMetricSystemName-serviceid=serviceid1
 
