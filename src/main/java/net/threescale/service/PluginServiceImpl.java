@@ -62,9 +62,9 @@ public class PluginServiceImpl implements PluginService{
             
         }
         else{
-            return getSyncAuthResponse(userKey, methodOrMetric, serviceId, serviceToken);        	
+            return getAuthResponse(userKey, methodOrMetric, serviceId, serviceToken, true);       	
         }
-        	
+        
         return resp;
     }
 	
@@ -77,18 +77,22 @@ public class PluginServiceImpl implements PluginService{
             serviceToken = servToken;
         }
         public void run(){
-            getAuthResponse(userKey, methodOrMetric, serviceId, serviceToken);
+            getAuthResponse(userKey, methodOrMetric, serviceId, serviceToken, false);
         }
         
     }
 	
 	
-    
-    private AuthorizeResponse getSyncAuthResponse(String userKey, String methodOrMetric, String serviceId, String serviceToken){
-        return getAuthResponse(userKey, methodOrMetric, serviceId, serviceToken);
-    }
-	
-    private AuthorizeResponse getAuthResponse(String userKey, String methodOrMetric, String serviceId, String serviceToken){
+    /**
+     * 
+     * @param userKey			Key on 3scale
+     * @param methodOrMetric	System name of method on 3scale
+     * @param serviceId			of Service on 3scale 
+     * @param serviceToken		for Service on 3scale 
+     * @param writeSuccessToMap Only write success back to map if it wasn't there before - to minimise processing 
+     * @return
+     */
+    private AuthorizeResponse getAuthResponse(String userKey, String methodOrMetric, String serviceId, String serviceToken, boolean writeSuccessToMap){
         AuthorizeResponse authorizeResponse = null;    	
         ParameterMap paramMap = buildParameterMap(serviceId, userKey, methodOrMetric, 1);
         
@@ -98,7 +102,7 @@ public class PluginServiceImpl implements PluginService{
             e.printStackTrace();
         }
         
-        if (authorizeResponse.success()){
+        if (writeSuccessToMap && authorizeResponse.success()){
             putToAuthMap(userKey+methodOrMetric, true);
         }
         else{
