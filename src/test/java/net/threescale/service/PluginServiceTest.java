@@ -1,7 +1,7 @@
 /*
-	The code in this repo is not supported by Red Hat/3scale. 
-    Rather it's example code of how you can and we did achieve 
-    very low latency API Management. 
+ *  The code in this repo is not supported by Red Hat/3scale. 
+ *  Rather it's example code of how to use the supported 3scale 
+ *  Java Plugin to achieve very low latency API Management. 
 /*
 /*
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +16,6 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-
 
 package net.threescale.service;
 
