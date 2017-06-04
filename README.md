@@ -1,7 +1,7 @@
 Disclaimer: The code in this repo is not supported by Red Hat/3scale. Rather it's example code of how you can and we did achieve very low latency API Management. We did this by applying a wrapper around the supported 3scale Java Plugin which uses caching and asynchronous calls to 3scale. More details below.
 
 # 3scaleJavaPluginWrapper
-In 3scale as well as using API Gateways to intercept incoming API request and Authorize and Report them, we also expose several code plugins for popular programming languages - Java, .NET, Ruby, Python, Node JS etc. For more on that see https://support.3scale.net/docs/deployment-options/plugin-setup. The Java Plugin is available here: https://github.com/3scale/3scale_ws_api_for_java. This is a caching wrapper for this Java Plugin. 
+In 3scale as well as using API Gateways to intercept incoming API requests and Authorize and Report them, we also expose several code plugins for popular programming languages - Java, .NET, Ruby, Python, Node JS etc. For more on that see https://support.3scale.net/docs/deployment-options/plugin-setup. The Java Plugin is available here: https://github.com/3scale/3scale_ws_api_for_java. This solution describes a caching wrapper for this Java Plugin. 
 
 It caches previous AuthRep (Authorize + Report rolled up into one) results to determine if communication with 3scale API Manager should be synchronous or asynchronous. If the previous call was successful, communication is asynchronous; otherwise synchronous. If client stays within their rate limits, it enables almost latency free API Management.
 It assumes you use API Key as the Authentication mode. It can be easily modified to use other modes.
