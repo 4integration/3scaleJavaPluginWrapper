@@ -1,4 +1,4 @@
-Disclaimer: The code in this repo is not supported by Red Hat/3scale. Rather it's example code of how you can and we did achieve very low latency API Management. We did this by applying a wrapper around the 3scale Java Plugin which uses caching and asynchronous calls to 3scale. More details below.
+Disclaimer: The code in this repo is not supported by Red Hat/3scale. Rather it's example code of how you can and we did achieve very low latency API Management. We did this by applying a wrapper around the supported 3scale Java Plugin which uses caching and asynchronous calls to 3scale. More details below.
 
 # 3scaleJavaPluginWrapper
 This is a caching wrapper for the 3scale Java Plugin. It caches previous AuthRep results to determine if communication with 3scale API Manager should be synchronous or asynchronous. If the previous call was successful, communication is asynchronous; otherwise synchronous. If client stays within their rate limits, it enables almost latency free API Management.
