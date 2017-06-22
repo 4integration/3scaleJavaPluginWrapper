@@ -17,13 +17,11 @@ Instructions.
     
 - Edit pom.xml if necessary - ensuring the version of the dependency with groupId net.3scale and artifactId 3scale-api has the same version as the Java Plugin in the previous step.
 
-- Edit and update /src/main/resources/props.properties. Each 3scale Service, defined under the API Menu, has a Service ID and a Service Token. You need to copy these from the 3scale API Manager. To get the Service ID, go into the Definition of each API and you will see it in the browser address bar following the '/services' URL fregment. To get the Service Token(s), click: gear sign on the top right of the screen -> Personal Settings -> Tokens. For every service you have, there will be a Service Token.
+- Edit and update /src/main/resources/props.properties. Each 3scale Service, defined under the API Menu in the 3scale API Manager, has a Service ID and a Service Token. You need to copy these from the 3scale API Manager to /src/main/resources/props.properties. 
 
-The next thing you need to do is retrieve your 3scale Method and Metric system names and map each to the service id and service token to which they belong. Inside each Service, click Integration. Go to the Mapping Rules section and click Define. You will see a list of methods and metrics. Copy the system names of each one that you want to use the Plugin Wrapper to manage. Make 2 entries for each one in props.properties, substitiuting your actual strings for methodOrMetricSystemName, serviceid1 and serviceToken1:
-
-methodOrMetricSystemName-serviceid=serviceid1
-
-methodOrMetricSystemName-token=serviceToken1
+To get the Service ID, go into the Definition of each API and you will see it in the browser address bar following the '/services' URL fragment. To get the Service Token(s), click: gear sign on the top right of the screen -> Personal Settings -> Tokens. For every service you have, there will be a Service Token.
+methodOrMetricSystemName=<serviceid retrieved from 3scale API Manager>
+methodOrMetricSystemName=<serviceToken retrieved from 3scale API Manager>
 
 3) Save these changes and run mvn install.
 
@@ -36,21 +34,20 @@ methodOrMetricSystemName-token=serviceToken1
         
         ....
         
-    	boolean authorized = pluginService.authRep(userKey, <method or metric system name>);
-    	if (!authorized){
-    		response.setStatus(403);
-    		return new Result(0, "ERROR - UNAUTHROIZED", "");
-    	}
-
-
-	    .... continue with/to your API code
+        AuthorizeResponse auth = pluginService.authRep("API Key retrieved from incoming request", "3scale method system name");
+        if (auth!=null && (!auth.success())){           
+            response.setResponseCode(403);
+            return;
+        }
+        //Authorization succeeded - we either got a null response (previous call was successful - and we don't wait for a response) or auth.success() was true
+        //.... continue with/to your API code
 
 Note - this may appear to closely couple your Java code to your 3scale configuration, i.e. your Java code needs to know your 3scale system name. However this can be avoided by using a standardized naming convention for your 3scale method names, e.g. the URL pattern: 
-GET /catalogs{id}/products/{id}/listings{month} 
+GET /catalogs{id}
 
-could correspond to the 3scale system name: get-catalogs-id-products-id-listings-month. 
+could correspond to the 3scale system name: get-catalogs-id
 
-This would also allow you to make the calls to the wrapper inside a dedicated module like a Servlet Filter, Interceptor or other cross cutting concern. 
+This would also allow you to make the calls to the wrapper inside a dedicated module like a Servlet Filter, Interceptor or other cross cutting concern. We recommend this instead of having the calls to the Plugin inside your API code.
 The module would just need to dynamically construct the system name of the method off the URL path and then call the wrapper. This way API Management is separated from API implementation.
 
 6) These are example latencies I achieved using my test. 
@@ -63,5 +60,5 @@ In the second, I apply the same test to an identical endpoint. Average latencies
 
 Summary
 
-This solution is a wrapper around the 3scale Java Plugin that offers near zero millisecond API Management. It's useful for say microservice to microservice calls where gateway usage adds too much complexity and latency. The code fragment (section 5) could be added as a Servlet filter, an inceptor or cross cutting concern or indeed its own injected class. 
+This example solution is a wrapper around the 3scale Java Plugin that offers near zero millisecond API Management. It's useful for say microservice to microservice calls where gateway usage adds too much complexity and latency. The code fragment (section 5) should be added as a Servlet filter, an inceptor or cross cutting concern or indeed its own injected class. 
 

@@ -48,6 +48,10 @@ public class PluginServiceImpl implements PluginService{
     private Map <String, Boolean> authorizations = new ConcurrentHashMap<String, Boolean>();
     private ExecutorService executor = null;
     private ServiceApi serviceApi = null;
+    
+    private String serviceId = null;
+    private String serviceToken = null;
+
 
     public PluginServiceImpl() throws IOException {
         InputStream propsInputStream = this.getClass().getResourceAsStream(PROPERTIES_FILE);	
@@ -55,14 +59,15 @@ public class PluginServiceImpl implements PluginService{
         props.load(propsInputStream);
         executor = Executors.newFixedThreadPool(1000);
         serviceApi = ServiceApiDriver.createApi();
+        
+        serviceId = props.getProperty(SERVICE_ID);
+        serviceToken = props.getProperty(SERVICE_TOKEN);
     }
 
 
 
     @Override
     public AuthorizeResponse authRep(String userKey, String methodOrMetric) throws ServerError {
-        String serviceId = props.getProperty(methodOrMetric+SERVICE_ID_SUFFIX);
-        String serviceToken = props.getProperty(methodOrMetric+SERVICE_TOKEN_SUFFIX);
         
         if (serviceId == null){
             throw new ServerError(props.getProperty(NO_SERVICE_ID_PROP_WARNING)+ methodOrMetric);
@@ -124,8 +129,8 @@ public class PluginServiceImpl implements PluginService{
         if (writeSuccessToMap && authorizeResponse.success()){
             putToAuthMap(userKey+methodOrMetric, true);
         }
-        else{
-            removeFromAuthMap(userKey+methodOrMetric);
+        else if (!authorizeResponse.success()){
+            authorizationFailed(userKey+methodOrMetric);
         }
          
         return authorizeResponse;
@@ -146,43 +151,38 @@ public class PluginServiceImpl implements PluginService{
     }
     
     private Boolean getFromAuthMap(String key){
-        synchronized (authorizations){
-            return authorizations.get(key);
-        }
+        return authorizations.get(key);
     }
 
-    private void removeFromAuthMap(String key){
-        synchronized (authorizations){
-            authorizations.remove(key);
-        }
+    private void authorizationFailed(String key){
+        authorizations.put(key, false);
     }
 
     private void putToAuthMap(String key, Boolean success){
-        synchronized (authorizations){
-            authorizations.put(key, success);
-        }    	
+        authorizations.put(key, success); 	
     }
-
-
 
     public void setAuthorizations(Map<String, Boolean> authorizations) {
         this.authorizations = authorizations;
     }
 
-
-
     public void setExecutor(ExecutorService executor) {
         this.executor = executor;
     }
-
-
 
     public void setServiceApi(ServiceApi serviceApi) {
         this.serviceApi = serviceApi;
     }
 
-
     public void setProps(Properties props) {
         this.props = props;
     }
+
+	public void setServiceId(String serviceId) {
+		this.serviceId = serviceId;
+	}
+
+	public void setServiceToken(String serviceToken) {
+		this.serviceToken = serviceToken;
+	}
 }

@@ -4,7 +4,7 @@
    <groupId>net.3scale</groupId>
    <artifactId>javaPluginWrapper</artifactId>
    <packaging>jar</packaging>
-   <version>0.0.3-SNAPSHOT</version>
+   <version>0.0.6-SNAPSHOT</version>
    <name>3scale Java Plugin Wrapper</name>
    <url>http://maven.apache.org</url>
    <properties>
@@ -15,7 +15,7 @@
       <dependency>
          <groupId>net.3scale</groupId>
          <artifactId>3scale-api</artifactId>
-         <version>3.0.4-SNAPSHOT</version>
+         <version>3.0.5-SNAPSHOT</version>
       </dependency>
       <dependency>
          <groupId>javax.servlet</groupId>

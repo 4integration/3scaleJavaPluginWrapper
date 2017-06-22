@@ -62,15 +62,13 @@ public class PluginServiceTest{
     
     @Test (expected = ServerError.class) 
     public void testServerErrorNoServiceId() throws ServerError  {    	
-    	mockProps.setProperty("method-token", "servicetoken");
-    	pluginServiceUnderTest.setProps(mockProps);     
+    	pluginServiceUnderTest.setServiceId(null);
         pluginServiceUnderTest.authRep("userKey", "method");
     }
     
     @Test (expected = ServerError.class) 
     public void testServerErrorNoServiceToken() throws ServerError  {
-        mockProps.setProperty("method-serviceid", "serviceId");      
-        pluginServiceUnderTest.setProps(mockProps);
+    	pluginServiceUnderTest.setServiceToken(null);
         pluginServiceUnderTest.authRep("userKey", "method");
     }
 
@@ -91,8 +89,8 @@ public class PluginServiceTest{
 
     @Test 
     public void testFailedAuthEmptyCache() throws ServerError  {
-    	mockProps.setProperty("method-token", "servicetoken"); 
-    	mockProps.setProperty("method-serviceid", "serviceId");        
+    	mockProps.setProperty("token", "servicetoken"); 
+    	mockProps.setProperty("serviceid", "serviceId");        
         
         AuthorizeResponse failResponse = new AuthorizeResponse(403, FAILED_RESP);
         when(mockServiceApi.authrep(any(), any(), any())).thenReturn(failResponse);
@@ -106,8 +104,8 @@ public class PluginServiceTest{
     
     @Test 
     public void testValueInCacheAsynchAuth() throws ServerError  {
-    	mockProps.setProperty("method-token", "servicetoken"); 
-    	mockProps.setProperty("method-serviceid", "serviceId");        
+    	mockProps.setProperty("token", "servicetoken"); 
+    	mockProps.setProperty("serviceid", "serviceId");        
         
     	when(mockAuthorizations.get("userKeymethod")).thenReturn(true);
                 
