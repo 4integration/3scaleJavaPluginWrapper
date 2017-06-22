@@ -34,17 +34,17 @@ methodOrMetricSystemName=<serviceToken retrieved from 3scale API Manager>
         
         ....
         
-        AuthorizeResponse auth = pluginService.authRep("API Key retrieved from incoming request", "3scale method system name");
+        AuthorizeResponse auth = pluginService.authRep("<API Key retrieved from incoming request>", "<3scale method system name>");
         if (auth!=null && (!auth.success())){           
             response.setResponseCode(403);
             return;
         }
-        //Authorization succeeded - we either got a null response (previous call was successful - and we don't wait for a response) or auth.success() was true
+        //Authorization succeeded if we reach this point - we either got a null response
+        //(previous call was successful - and we don't wait for a response) or auth.success() was true
         //.... continue with/to your API code
 
 Note - this may appear to closely couple your Java code to your 3scale configuration, i.e. your Java code needs to know your 3scale system name. However this can be avoided by using a standardized naming convention for your 3scale method names, e.g. the URL pattern: 
 GET /catalogs{id}
-
 could correspond to the 3scale system name: get-catalogs-id
 
 This would also allow you to make the calls to the wrapper inside a dedicated module like a Servlet Filter, Interceptor or other cross cutting concern. We recommend this instead of having the calls to the Plugin inside your API code.
