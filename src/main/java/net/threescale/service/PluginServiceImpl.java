@@ -28,6 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.Callable; 
 
 import org.springframework.stereotype.Service;
 
@@ -57,7 +58,8 @@ public class PluginServiceImpl implements PluginService{
         InputStream propsInputStream = this.getClass().getResourceAsStream(PROPERTIES_FILE);	
         props = new Properties();
         props.load(propsInputStream);
-        executor = Executors.newFixedThreadPool(1000);
+        propsInputStream.close();
+        executor = Executors.newFixedThreadPool(10);
         serviceApi = ServiceApiDriver.createApi();
         
         serviceId = props.getProperty(SERVICE_ID);
@@ -81,7 +83,7 @@ public class PluginServiceImpl implements PluginService{
         String key = userKey+methodOrMetric;
         Boolean auth = getFromAuthMap(key);
         if (auth!=null && (auth==true)){
-            Runnable asyncAuth = new ASyncAuth(userKey, methodOrMetric, serviceId, serviceToken);
+            Callable<Void> asyncAuth = new ASyncAuth(userKey, methodOrMetric, serviceId, serviceToken);
             executor.submit(asyncAuth);
             
         }
@@ -92,7 +94,7 @@ public class PluginServiceImpl implements PluginService{
         return resp;
     }
 	
-    class ASyncAuth implements Runnable {    
+   class ASyncAuth implements Callable<Void> {    
         String userKey, methodOrMetric, serviceId, serviceToken;
         ASyncAuth(String uKey, String methodMetric, String servId, String servToken){
             userKey = uKey;
@@ -100,8 +102,9 @@ public class PluginServiceImpl implements PluginService{
             serviceId = servId;
             serviceToken = servToken;
         }
-        public void run(){
+        public Void call(){
             getAuthResponse(userKey, methodOrMetric, serviceId, serviceToken, false);
+            return null;
         }
         
     }
@@ -178,11 +181,11 @@ public class PluginServiceImpl implements PluginService{
         this.props = props;
     }
 
-	public void setServiceId(String serviceId) {
-		this.serviceId = serviceId;
-	}
+    public void setServiceId(String serviceId) {
+        this.serviceId = serviceId;
+    }
 
-	public void setServiceToken(String serviceToken) {
-		this.serviceToken = serviceToken;
-	}
+    public void setServiceToken(String serviceToken) {
+        this.serviceToken = serviceToken;
+    }
 }
